@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #333;
+        }
+
+        #plotContainer {
+            width: 80%;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        #plotImg {
+            width: 100%;
+            height: auto;
+        }
+
+        #decimalSlider {
+            width: 80%;
+            margin: 20px auto;
+            display: block;
+        }
+
+        #decimalValue {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #666;
+        }
+
+        #decimalDisplay {
+            font-weight: bold;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+    <title>PyBaMM Results</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <h1>PyBaMM Battery Model Results</h1>
+    
+    <!-- Slider to select decimal value -->
+    <input type="range" min="0" max="10" value="0" step="1" id="decimalSlider">
+    <div id="decimalValue">Seconds Passed: <span id="decimalDisplay">0</span></div>
+    <!-- Placeholder for the plot -->
+    <div id="plotContainer">
+        <img id="plotImg" src="data:image/png;base64,{{ plot_data }}" alt="PyBaMM Plot">
+    </div>
+
+    <script>
+        // Function to update plot and reload page when slider value changes
+        $('#decimalSlider').on('change', function() {
+            var decimal = $(this).val() / 10;  // Convert slider value to decimal
+            // Update URL with slider value
+            var newUrl = window.location.pathname + '?decimal=' + decimal;
+            window.history.replaceState(null, null, newUrl);
+            // Reload the page
+            location.reload();
+        });
+
+        // Function to update the decimal display when slider value changes
+        $('#decimalSlider').on('input', function() {
+            var decimal = $(this).val() / 10;  // Convert slider value to decimal
+            // Update the decimal display
+            $('#decimalDisplay').text(decimal*3600);
+        });
+
+        // Call updatePlot() when the page loads
+        $(document).ready(function() {
+            // Get the initial value of the slider from URL parameter
+            var urlParams = new URLSearchParams(window.location.search);
+            var initialDecimal = urlParams.get('decimal') || 0;
+            // Update the slider value
+            $('#decimalSlider').val(initialDecimal * 10);
+            $('#decimalDisplay').text(initialDecimal*3600);
+        });
+    </script>
+</body>
+</html>
